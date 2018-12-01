@@ -1,2 +1,5 @@
 /tmp/*
 !/tmp/.keep
+/results/*
+!/results/.keep
+__pycache__
