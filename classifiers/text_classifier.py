@@ -13,6 +13,14 @@ from autokeras.utils import temp_path_generator, ensure_dir
 from autokeras.constant import Constant
 
 class TextPreprocessor:
+    def __init__(self,
+                 store_path=Constant.STORE_PATH,
+                 max_seq_length=Constant.MAX_SEQUENCE_LENGTH,
+                 max_num_words=Constant.MAX_NB_WORDS):
+        self.store_path     = store_path
+        self.max_seq_length = max_seq_length
+        self.max_num_words  = max_num_words
+
     def clean_str(self, string):
         return string.strip().lower()
 
@@ -20,21 +28,21 @@ class TextPreprocessor:
         """
         It takes an raw string, clean it and processing it into tokenlized numpy array.
         """
-        if Constant.STORE_PATH == '':
+        if self.store_path == '':
             temp_path = temp_path_generator()
             path = temp_path + '_store'
         else:
-            path = Constant.STORE_PATH
+            path = self.store_path
 
         ensure_dir(path)
 
         x_train = [self.clean_str(x) for x in x_train]
-        x_train, word_index = tokenlize_text(max_seq_length=Constant.MAX_SEQUENCE_LENGTH,
-                                             max_num_words=Constant.MAX_NB_WORDS,
+        x_train, word_index = tokenlize_text(max_seq_length=self.max_seq_length,
+                                             max_num_words=self.max_num_words,
                                              x_train=x_train)
 
         print("generating preprocessing model...")
-        x_train = processing(path=path, word_index=word_index, input_length=Constant.MAX_SEQUENCE_LENGTH, x_train=x_train)
+        x_train = processing(path=path, word_index=word_index, input_length=self.max_seq_length, x_train=x_train)
         return x_train
 
 class TextSupervised(DeepSupervised, ABC):
