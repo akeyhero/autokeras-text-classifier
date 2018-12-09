@@ -73,7 +73,7 @@ class TextSupervised(DeepSupervised, ABC):
         super().__init__(**kwargs)
         self.preprocessor = TextPreprocessor()
 
-    def fit(self, x, y, x_test=None, y_test=None, time_limit=None):
+    def fit(self, x, y, time_limit=None):
         """Find the best neural architecture and train it.
 
         Based on the given dataset, the function will find the best neural architecture for it.
@@ -83,12 +83,10 @@ class TextSupervised(DeepSupervised, ABC):
         Args:
             x: A numpy.ndarray instance containing the training data.
             y: A numpy.ndarray instance containing the label of the training data.
-            y_test: A numpy.ndarray instance containing the testing data.
-            x_test: A numpy.ndarray instance containing the label of the testing data.
             time_limit: The time limit for the search in seconds.
         """
         x = self.preprocessor.preprocess(x)
-        super().fit(x, y, x_test, y_test, time_limit)
+        super().fit(x, y, time_limit)
 
     def init_transformer(self, x):
         # Wrap the data into DataLoaders
