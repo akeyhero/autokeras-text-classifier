@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from classifiers.text_classifier import TextClassifier
 
 # FIXME: argparse を使う
@@ -10,9 +11,10 @@ RESULT_DIR = 'results'
 
 def main():
     x_train, y_train = read_csv(DATA_PATH)
+    x_train, x_text, y_train, y_test = train_test_split(x_train, y_train)
     clf = TextClassifier(path=RESULT_DIR, verbose=True)
     clf.fit(x_train, y_train, time_limit=12*60*60)
-    clf.final_fit(x_train, y_train, retrain=True)
+    clf.final_fit(x_train, y_train, x_test, y_test, retrain=True)
 
 def read_csv(file_path):
     """csv file read example method
