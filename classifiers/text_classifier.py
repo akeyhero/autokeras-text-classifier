@@ -13,13 +13,10 @@ from autokeras.utils import temp_path_generator, ensure_dir
 from autokeras.constant import Constant
 
 class TextPreprocessor:
-    def __init__(self,
-                 store_path=Constant.STORE_PATH,
-                 max_seq_length=Constant.MAX_SEQUENCE_LENGTH,
-                 max_num_words=Constant.MAX_NB_WORDS):
-        self.store_path     = store_path
-        self.max_seq_length = max_seq_length
-        self.max_num_words  = max_num_words
+    def __init__(self, store_path=None, max_seq_length=None, max_num_words=None):
+        self.store_path     = store_path     or Constant.STORE_PATH
+        self.max_seq_length = max_seq_length or Constant.MAX_SEQUENCE_LENGTH
+        self.max_num_words  = max_num_words  or Constant.MAX_NB_WORDS
 
     def clean_str(self, string):
         return string.strip().lower()
@@ -70,8 +67,10 @@ class TextSupervised(DeepSupervised, ABC):
                 Otherwise, the classifier will start a new search.
             searcher_args: A dictionary containing the parameters for the searcher's __init__ function.
         """
-        super().__init__(**kwargs)
-        self.preprocessor = TextPreprocessor()
+        def slice_kwargs(*args):
+            return { k: kwargs[k] for k in args if k in kwargs }
+        super().__init__(**slice_kwargs('verbose', 'path', 'resume', 'searcher_args'))
+        self.preprocessor = TextPreprocessor(**slice_kwargs('store_path', 'max_seq_length', 'max_num_words'))
 
     def fit(self, x, y, time_limit=None):
         """Find the best neural architecture and train it.
