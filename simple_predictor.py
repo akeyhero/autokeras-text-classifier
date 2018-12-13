@@ -16,8 +16,16 @@ def main():
         print('判定したい文章: ', end='')
         sentence = input()
         doc = tokenize(sentence, processor)
-        res = clf.predict([doc])
-        print('判定結果: ' + res[0])
+        print_prediction([doc], clf)
+
+def print_prediction(docs, clf):
+    """ 判定結果をプリント; デバッグのため、評価値を表示する """
+    x_test = clf.preprocess(docs)
+    test_loader = clf.data_transformer.transform_test(x_test)
+    scores_array = clf.cnn.predict(test_loader)
+    predictions = clf.inverse_transform_y(scores_array)
+    for doc, scores, prediction in zip(docs, scores_array, predictions):
+        print('判定結果: {} ({}; 「{}」))'.format(prediction, scores, doc))
 
 def parse_args():
     parser = argparse.ArgumentParser()
